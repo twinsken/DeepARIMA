@@ -130,6 +130,8 @@ class Ele(Dataset):
     def __init__(self, path, train_ins_num, pred_days, overlap, win_len, enc_len):
 
         np.random.seed(0)
+        file_name = "LD2011_2014.txt"
+        path = os.path.join(path, file_name)
         train_start = "20110101"
         train_end = "20140831"
         self.covariate_num = 4
@@ -138,7 +140,7 @@ class Ele(Dataset):
         self.enc_len = enc_len
         logger.info("building datasets from %s" % path)
         self.points,self.covariates,self.dates,self.withhold_len =  self.LoadData(path,train_start,train_end,pred_days,covariate_num = self.covariate_num)
-        logger.info('withhold_len: ',self.withhold_len)
+        logger.info('withhold_len: %d' % self.withhold_len)
         series_len = self.points.shape[0]     # Length of every client's electricity consumption
         self.sample_index = {}
         count = 0
@@ -180,7 +182,11 @@ class Ele(Dataset):
         key = self.dic_keys[idx]
         series_id, series_index = self.sample_index[key]
         train_seq = np.zeros((self.win_len,points_size))
-        train_seq[:,0] = self.points[(series_index-1):(series_index+self.win_len-1),series_id]
+        if series_index == 0:
+            train_seq[1:, 0] = self.points[(series_index):(series_index + self.win_len - 1), series_id]
+        else:
+            train_seq[:,0] = self.points[(series_index-1):(series_index+self.win_len-1), series_id]
+        #train_seq[:,0] = self.points[(series_index-1):(series_index+self.win_len-1),series_id]
         train_seq[:,1:] = self.covariates[series_id,series_index:(self.win_len+series_index),:]
         gt = self.points[series_index:(series_index+self.win_len),series_id]
         scaling_factor = self.weight[key]
@@ -323,7 +329,11 @@ class Traffic(Dataset):
         series_id, series_index = self.sample_index[key]
         train_seq = np.zeros((self.win_len,points_size))
         try:
-            train_seq[:,0] = self.points[(series_index-1):(series_index+self.win_len-1),series_id]
+            if series_index == 0:
+                train_seq[1:, 0] = self.points[(series_index):(series_index + self.win_len - 1), series_id]
+            else:
+                train_seq[:, 0] = self.points[(series_index - 1):(series_index + self.win_len - 1), series_id]
+            #   train_seq[:,0] = self.points[(series_index-1):(series_index+self.win_len-1),series_id]
         except (BaseException):
             import pdb;
             pdb.set_trace()
@@ -462,7 +472,11 @@ class Traffic_fine(Dataset):
         series_id, series_index = self.sample_index[key]
         train_seq = np.zeros((self.win_len,points_size))
         try:
-            train_seq[:,0] = self.points[(series_index-1):(series_index+self.win_len-1),series_id]
+            if series_index == 0:
+                train_seq[1:, 0] = self.points[(series_index):(series_index + self.win_len - 1), series_id]
+            else:
+                train_seq[:, 0] = self.points[(series_index - 1):(series_index + self.win_len - 1), series_id]
+            #   train_seq[:,0] = self.points[(series_index-1):(series_index+self.win_len-1),series_id]
         except (BaseException):
             import pdb;
             pdb.set_trace()
@@ -549,8 +563,6 @@ class Traffic_fineTest(Dataset):
         return (train_seq,gt,series_id, scaling_factor)
 
 
-
-
 class Ele_fine(Dataset):
     def __init__(self, path, train_ins_num ,pred_days, overlap, win_len, enc_len):
 
@@ -604,7 +616,11 @@ class Ele_fine(Dataset):
         series_id, series_index = self.sample_index[key]
         train_seq = np.zeros((self.win_len,points_size))
         try:
-            train_seq[:,0] = self.points[(series_index-1):(series_index+self.win_len-1),series_id]
+            if series_index == 0:
+                train_seq[1:, 0] = self.points[(series_index):(series_index + self.win_len - 1), series_id]
+            else:
+                train_seq[:, 0] = self.points[(series_index - 1):(series_index + self.win_len - 1), series_id]
+            #   train_seq[:,0] = self.points[(series_index-1):(series_index+self.win_len-1),series_id]
         except (BaseException):
             import pdb;
             pdb.set_trace()
@@ -751,7 +767,11 @@ class M4(Dataset):
         series_id, series_index = self.sample_index[key]
         train_seq = np.zeros((self.win_len,points_size))
         try:
-            train_seq[:,0] = self.points[(series_index-1):(series_index+self.win_len-1),series_id]
+            if series_index == 0:
+                train_seq[1:, 0] = self.points[(series_index):(series_index + self.win_len - 1), series_id]
+            else:
+                train_seq[:, 0] = self.points[(series_index - 1):(series_index + self.win_len - 1), series_id]
+            #train_seq[:,0] = self.points[(series_index-1):(series_index+self.win_len-1),series_id]
         except (BaseException):
             import pdb;
             pdb.set_trace()
@@ -884,7 +904,11 @@ class Wind(Dataset):
         series_id, series_index = self.sample_index[key]
         train_seq = np.zeros((self.win_len,points_size))
         try:
-            train_seq[:,0] = self.points[(series_index-1):(series_index+self.win_len-1),series_id]
+            if series_index == 0:
+                train_seq[1:, 0] = self.points[(series_index):(series_index + self.win_len - 1), series_id]
+            else:
+                train_seq[:, 0] = self.points[(series_index - 1):(series_index + self.win_len - 1), series_id]
+            #   train_seq[:,0] = self.points[(series_index-1):(series_index+self.win_len-1),series_id]
         except (BaseException):
             import pdb;
             pdb.set_trace()
@@ -1026,7 +1050,11 @@ class Solar(Dataset):
         series_id, series_index = self.sample_index[key]
         train_seq = np.zeros((self.win_len,points_size))
         try:
-            train_seq[:,0] = self.points[(series_index-1):(series_index+self.win_len-1),series_id]
+            if series_index == 0:
+                train_seq[1:, 0] = self.points[(series_index):(series_index + self.win_len - 1), series_id]
+            else:
+                train_seq[:, 0] = self.points[(series_index - 1):(series_index + self.win_len - 1), series_id]
+            #   train_seq[:,0] = self.points[(series_index-1):(series_index+self.win_len-1),series_id]
         except (BaseException):
             import pdb;
             pdb.set_trace()

@@ -21,7 +21,6 @@ import matplotlib.pyplot as plt
 
 logger = logging.getLogger(__name__)
 
-
 device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
 parser = argparse.ArgumentParser(description='PyTorch Deep ARIMA on Time series forecasting')
 
@@ -152,7 +151,7 @@ def train_and_evaluate(params: utils.Params,
         #    writer.add_scalar('validation/'+k, valid_metrics[k], epoch)
         #for k,v in test_metrics.items():
         #    writer.add_scalar('test /'+k, test_metrics[k], epoch)
-        #test_ND_summary[epoch] = test_metrics['ND']
+        test_ND_summary[epoch] = test_metrics['ND']
 
         if valid_metrics['ND'] < best_valid_ND:
             logger.info('- Found new best ND')
@@ -207,8 +206,8 @@ if __name__ == '__main__':
     params = utils.Params(json_path, args.dataset)
 
     # add output dir path, plot dir path, log path
-    model_name += "_" + str(int(time.time()))
-    params.out_dir = os.path.join(args.out_dir, model_name)
+    exp_dir = args.dataset + "_" + model_name + "_" + str(int(time.time()))
+    params.out_dir = os.path.join(args.out_dir, exp_dir)
     params.plot_dir = os.path.join(params.out_dir, 'figures')
     params.log_path = os.path.join(params.out_dir, 'train.log')
     params.device = device
@@ -240,8 +239,15 @@ if __name__ == '__main__':
     if(args.dataset=='synthetic'):
         train_set = Synthetic(data_dir, num_train, pred_days=params.pred_days, overlap=params.overlap,
                               win_len=params.enc_len+params.dec_len, enc_len=params.enc_len)
+        # used for seq_id embedding
         params.seq_num = train_set.points.shape[1]
         test_set = SyntheticTest(train_set.points, train_set.covariates, train_set.withhold_len, params.enc_len, params.dec_len)
+    elif(args.dataset=='elect'):
+        train_set = Ele(data_dir, num_train, overlap = params.overlap, pred_days=params.pred_days,
+                        win_len=params.enc_len+params.dec_len, enc_len=params.enc_len)
+        # used for seq_id embedding
+        params.seq_num = train_set.points.shape[1]
+        test_set = EleTest(train_set.points, train_set.covariates, train_set.withhold_len, params.enc_len, params.dec_len)
     else:
         raise NameError('Currently, we only support synthetic, traffic, ele, m4, solar and wind')
     logger.info('Loading complete.')
