@@ -1,0 +1,52 @@
+{
+    "default": {
+        "learning_rate": 1e-3,
+        "early_stop_ep": 5,
+        "num_epochs": 20,
+
+        "batch_size": 64,
+        "eval_batch_size": -1,
+        "sample_times": 200,
+
+        "enc_len": 168,
+        "dec_len": 24,
+
+        "lstm_layers": 3,
+        "cov_dim": 5,
+
+        "lstm_hidden_dim": 40,
+        "embedding_dim": 20,
+        "lstm_dropout": 0.1,
+
+        "seed": 0,
+        "relative_metrics": false,
+        "sampling": true,
+
+        "overlap": true,
+        "pred_days": 7,
+        "train_ins_num": 500000
+    },
+
+    "synthetic": {
+        "learning_rate": 1e-3,
+        "early_stop_ep": 5,
+        "num_epochs": 50,
+
+        "batch_size": 32,
+        "eval_batch_size": -1,
+        "sample_times": 50,
+
+        "enc_len": 168,
+        "dec_len": 24,
+
+        "lstm_layers": 1,
+        "cov_dim": 2,
+
+        "lstm_hidden_dim": 8,
+        "embedding_dim": 1,
+        "lstm_dropout": 0,
+
+        "pred_days": 0.1,
+        "train_ins_num": 1000
+    }
+}
